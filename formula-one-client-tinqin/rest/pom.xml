@@ -3,12 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.tinqin.academy.client</groupId>
+        <groupId>com.tinqin.academy</groupId>
         <artifactId>formula-one-client-tinqin</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>0.0.1-SNAPSHOT</version><!-- lookup parent from repository -->
     </parent>
-    <groupId>com.tinqin.academy.client</groupId>
     <artifactId>rest</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>rest</name>
@@ -24,13 +22,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.tinqin.academy.client</groupId>
+            <groupId>com.tinqin.academy</groupId>
             <artifactId>core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.tinqin.academy.client</groupId>
+            <groupId>com.tinqin.academy</groupId>
             <artifactId>api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tinqin.academy</groupId>
+            <artifactId>domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
