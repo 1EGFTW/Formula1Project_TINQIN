@@ -1,8 +1,7 @@
 package com.tinqin.academy.converter;
 
 import com.tinqin.academy.entity.Driver;
-import com.tinqin.academy.model.transfer.driver.DriverResponse;
-import org.springframework.context.annotation.ComponentScan;
+import com.tinqin.academy.model.driver.DriverResponse;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.tinqin.academy.model.transfer.driver;
+package com.tinqin.academy.model.driver;
 
 import com.tinqin.academy.base.OperationResult;
 import lombok.AccessLevel;

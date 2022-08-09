@@ -1,4 +1,4 @@
-package com.tinqin.academy.model.transfer.team;
+package com.tinqin.academy.model.team;
 
 import com.tinqin.academy.base.OperationInput;
 import lombok.*;

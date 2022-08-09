@@ -12,10 +12,10 @@ import com.tinqin.academy.exception.TeamNotFoundException;
 import com.tinqin.academy.exception.TransferNotPossibleException;
 import com.tinqin.academy.model.transfer.TransferRequest;
 import com.tinqin.academy.model.transfer.TransferResponse;
-import com.tinqin.academy.model.transfer.driver.DriverRequest;
-import com.tinqin.academy.model.transfer.driver.DriverResponse;
-import com.tinqin.academy.model.transfer.team.TeamRequest;
-import com.tinqin.academy.model.transfer.team.TeamResponse;
+import com.tinqin.academy.model.driver.DriverRequest;
+import com.tinqin.academy.model.driver.DriverResponse;
+import com.tinqin.academy.model.team.TeamRequest;
+import com.tinqin.academy.model.team.TeamResponse;
 import com.tinqin.academy.operation.DriverProcessor;
 import com.tinqin.academy.operation.TeamProcessor;
 import com.tinqin.academy.operation.TransferProcessor;
@@ -23,7 +23,6 @@ import com.tinqin.academy.repository.DriverRepository;
 import com.tinqin.academy.repository.TeamRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Stream;
@@ -34,14 +33,16 @@ public class TransferProcessorCore implements TransferProcessor {
     private final TeamProcessor teamProcessor;
     private final TeamRepository teamRepository;
     private final DriverRepository driverRepository;
-    private final ConversionService conversionService;
+    private static final Double FIA_TRANSFER_FEE=5000000.0;
 
-    public TransferProcessorCore(DriverProcessor driverProcessor, TeamProcessor teamProcessor, TeamRepository teamRepository, DriverRepository driverRepository, ConversionService conversionService) {
+    public TransferProcessorCore(DriverProcessor driverProcessor, TeamProcessor teamProcessor, TeamRepository teamRepository, DriverRepository driverRepository) {
         this.driverProcessor = driverProcessor;
         this.teamProcessor = teamProcessor;
         this.teamRepository = teamRepository;
         this.driverRepository = driverRepository;
-        this.conversionService = conversionService;
+    }
+    private boolean fundsCheck(Double budget,Double salary){
+        return budget - salary - FIA_TRANSFER_FEE > 0;
     }
 
     @Override
@@ -60,11 +61,12 @@ public class TransferProcessorCore implements TransferProcessor {
 
             final Double newTeamBudget=Double.parseDouble(newTeam.getBudget());
             final Double driverSalary=Double.parseDouble(driver.getSalary());
-            final Double budgetAfterTransfer=newTeamBudget-driverSalary-5000000;
+            final Double budgetAfterTransfer=newTeamBudget-driverSalary-FIA_TRANSFER_FEE;
 
-            if(budgetAfterTransfer<0){
+            if(!fundsCheck(newTeamBudget,driverSalary)){
                 throw new InsufficienFundsException();
             }
+
            return Stream.of(driverRepository.findDriverByFirstNameAndLastName(driver.getFirstName(),driver.getLastName())
                     .orElseThrow(DriverNotFoundException::new))
                     .map(driver1 -> {
