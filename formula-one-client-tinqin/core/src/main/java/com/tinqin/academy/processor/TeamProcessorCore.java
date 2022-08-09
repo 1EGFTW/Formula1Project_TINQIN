@@ -5,8 +5,8 @@ import com.tinqin.academy.entity.Team;
 import com.tinqin.academy.error.NoSuchTeamError;
 import com.tinqin.academy.error.TransferFailedError;
 import com.tinqin.academy.exception.TeamNotFoundException;
-import com.tinqin.academy.model.transfer.team.TeamRequest;
-import com.tinqin.academy.model.transfer.team.TeamResponse;
+import com.tinqin.academy.model.team.TeamRequest;
+import com.tinqin.academy.model.team.TeamResponse;
 import com.tinqin.academy.operation.TeamProcessor;
 import com.tinqin.academy.repository.TeamRepository;
 import io.vavr.control.Either;
@@ -25,7 +25,7 @@ public class TeamProcessorCore implements TeamProcessor {
     }
 
     @Override
-    public Either<Error, TeamResponse> process(TeamRequest input) {
+    public Either<Error, TeamResponse> process(final TeamRequest input) {
         return Try.of(()->{
             final Team team=teamRepository.findById(input.getTeamId())
                     .orElseThrow(TeamNotFoundException::new);
