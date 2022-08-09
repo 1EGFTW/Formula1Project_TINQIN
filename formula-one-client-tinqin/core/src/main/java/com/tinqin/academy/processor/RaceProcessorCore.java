@@ -25,7 +25,7 @@ public class RaceProcessorCore implements RaceProcessor {
     }
 
     @Override
-    public Either<Error, RaceResponse> process(RaceRequest input) {
+    public Either<Error, RaceResponse> process(final RaceRequest input) {
         return Try.of(()->{
             Race race=raceRepository.findById(input.getRaceId())
                     .orElseThrow(RaceNotFoundException::new);

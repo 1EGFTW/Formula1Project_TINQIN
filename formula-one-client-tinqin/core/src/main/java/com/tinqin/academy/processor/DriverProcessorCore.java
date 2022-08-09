@@ -25,7 +25,7 @@ public class DriverProcessorCore implements DriverProcessor {
     }
 
     @Override
-    public Either<Error, DriverResponse> process(DriverRequest input) {
+    public Either<Error, DriverResponse> process(final DriverRequest input) {
         return Try.of(()->{
             final Driver driver=driverRepository.findById(input.getDriverId())
                     .orElseThrow(DriverNotFoundException::new);

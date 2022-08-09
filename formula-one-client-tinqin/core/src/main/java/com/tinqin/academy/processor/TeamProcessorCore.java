@@ -25,7 +25,7 @@ public class TeamProcessorCore implements TeamProcessor {
     }
 
     @Override
-    public Either<Error, TeamResponse> process(TeamRequest input) {
+    public Either<Error, TeamResponse> process(final TeamRequest input) {
         return Try.of(()->{
             final Team team=teamRepository.findById(input.getTeamId())
                     .orElseThrow(TeamNotFoundException::new);

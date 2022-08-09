@@ -46,7 +46,7 @@ public class TransferProcessorCore implements TransferProcessor {
     }
 
     @Override
-    public Either<Error, TransferResponse> process(TransferRequest input) {
+    public Either<Error, TransferResponse> process(final TransferRequest input) {
         return Try.of(()->{
             final Either<Error,DriverResponse> driverResult=driverProcessor.process(new DriverRequest(input.getDriverId()));
             final Either<Error, TeamResponse> oldTeamResult=teamProcessor.process(new TeamRequest(input.getTeamId()));
