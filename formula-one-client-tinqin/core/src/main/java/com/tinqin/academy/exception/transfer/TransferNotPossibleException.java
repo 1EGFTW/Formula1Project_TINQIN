@@ -1,4 +1,4 @@
-package com.tinqin.academy.exception;
+package com.tinqin.academy.exception.transfer;
 
 public class TransferNotPossibleException extends RuntimeException{
 }

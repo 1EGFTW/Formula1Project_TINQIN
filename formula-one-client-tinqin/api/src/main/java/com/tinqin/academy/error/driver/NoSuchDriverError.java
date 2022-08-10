@@ -1,12 +1,12 @@
-package com.tinqin.academy.error;
+package com.tinqin.academy.error.driver;
 
 import com.tinqin.academy.base.Error;
 import org.springframework.http.HttpStatus;
 
-public class NoSuchTeamError implements Error {
+public class NoSuchDriverError implements Error {
     @Override
     public String getMessage() {
-        return "No such team exists!";
+        return "No such driver exists!";
     }
 
     @Override

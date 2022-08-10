@@ -2,9 +2,9 @@ package com.tinqin.academy.processor.team;
 
 import com.tinqin.academy.base.Error;
 import com.tinqin.academy.data.entity.Team;
-import com.tinqin.academy.error.NoSuchTeamError;
-import com.tinqin.academy.error.TransferFailedError;
-import com.tinqin.academy.exception.TeamNotFoundException;
+import com.tinqin.academy.error.team.NoSuchTeamError;
+import com.tinqin.academy.error.transfer.TransferFailedError;
+import com.tinqin.academy.exception.team.TeamNotFoundException;
 import com.tinqin.academy.model.team.TeamRequest;
 import com.tinqin.academy.model.team.TeamResponse;
 import com.tinqin.academy.operation.TeamProcessor;
