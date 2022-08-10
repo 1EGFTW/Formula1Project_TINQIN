@@ -2,9 +2,9 @@ package com.tinqin.academy.processor.driver;
 
 import com.tinqin.academy.base.Error;
 import com.tinqin.academy.data.entity.Driver;
-import com.tinqin.academy.error.NoSuchDriverError;
-import com.tinqin.academy.error.TransferFailedError;
-import com.tinqin.academy.exception.DriverNotFoundException;
+import com.tinqin.academy.error.driver.NoSuchDriverError;
+import com.tinqin.academy.error.transfer.TransferFailedError;
+import com.tinqin.academy.exception.driver.DriverNotFoundException;
 import com.tinqin.academy.model.driver.DriverRequest;
 import com.tinqin.academy.model.driver.DriverResponse;
 import com.tinqin.academy.operation.DriverProcessor;

@@ -1,4 +1,4 @@
-package com.tinqin.academy.error;
+package com.tinqin.academy.error.transfer;
 
 import com.tinqin.academy.base.Error;
 import org.springframework.http.HttpStatus;

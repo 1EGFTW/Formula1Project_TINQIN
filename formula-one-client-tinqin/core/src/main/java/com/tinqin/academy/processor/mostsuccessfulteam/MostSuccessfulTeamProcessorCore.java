@@ -24,6 +24,7 @@ public class MostSuccessfulTeamProcessorCore implements MostSuccessfulTeamProces
     private final TeamRepository teamRepository;
     private final DriverRepository driverRepository;
 
+
     public MostSuccessfulTeamProcessorCore(TeamRepository teamRepository, DriverRepository driverRepository) {
         this.teamRepository = teamRepository;
         this.driverRepository = driverRepository;
@@ -33,7 +34,7 @@ public class MostSuccessfulTeamProcessorCore implements MostSuccessfulTeamProces
     public Either<Error, MostSuccessfulTeamResponse> process(final MostSuccessfulTeamRequest input) {
         return Try.of(()->{
             final List<Team> teams=teamRepository.findAll();
-            final Map<Integer,Team> result=new HashMap<>();
+            final Map<Integer,String> result=new HashMap<>();
             teams.stream()
                     .forEach(team -> {
                         final List<Integer> allTeamTitles= driverRepository.findDriversByTeam(team)
@@ -44,15 +45,14 @@ public class MostSuccessfulTeamProcessorCore implements MostSuccessfulTeamProces
                         for(Integer title:allTeamTitles){
                             titlesForTeam+=title;
                         }
-                        result.put(titlesForTeam,team);
+                        result.put(titlesForTeam,team.getTeamName());
                     });
             final Integer mostTitles=result.keySet().stream()
                     .max(Integer::compare)
                     .orElseThrow();
-            final Team mostSuccessfulTeam= result.get(mostTitles);
 
             return MostSuccessfulTeamResponse.builder()
-                    .teamName(mostSuccessfulTeam.getTeamName())
+                    .teamName(result.get(mostTitles))
                     .numberOfTitles(String.valueOf(mostTitles))
                     .build();
         }).toEither()
