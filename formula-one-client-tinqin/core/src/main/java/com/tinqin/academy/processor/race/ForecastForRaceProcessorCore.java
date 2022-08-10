@@ -1,4 +1,4 @@
-package com.tinqin.academy.processor;
+package com.tinqin.academy.processor.race;
 
 import com.tinqin.academy.data.entity.Race;
 import com.tinqin.academy.feign.ForecastClient;

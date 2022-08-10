@@ -1,4 +1,4 @@
-package com.tinqin.academy.processor;
+package com.tinqin.academy.processor.race;
 
 import com.tinqin.academy.base.Error;
 import com.tinqin.academy.data.entity.Race;
@@ -23,7 +23,7 @@ public class LongestRaceProcessorCore implements LongestRaceProcessor {
     }
 
     @Override
-    public Either<Error, LongestRaceResponse> process(LongestRaceRequest input) {
+    public Either<Error, LongestRaceResponse> process(final LongestRaceRequest input) {
         return Try.of(()->{
             List<Race> races=raceRepository.findAll();
             return races.stream()
