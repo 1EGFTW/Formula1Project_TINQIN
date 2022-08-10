@@ -1,4 +1,4 @@
-package com.tinqin.academy.processor;
+package com.tinqin.academy.processor.driver;
 
 import com.tinqin.academy.base.Error;
 import com.tinqin.academy.data.entity.Driver;
