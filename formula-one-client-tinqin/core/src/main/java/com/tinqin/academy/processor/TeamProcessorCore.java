@@ -1,14 +1,14 @@
 package com.tinqin.academy.processor;
 
 import com.tinqin.academy.base.Error;
-import com.tinqin.academy.entity.Team;
+import com.tinqin.academy.data.entity.Team;
 import com.tinqin.academy.error.NoSuchTeamError;
 import com.tinqin.academy.error.TransferFailedError;
 import com.tinqin.academy.exception.TeamNotFoundException;
 import com.tinqin.academy.model.team.TeamRequest;
 import com.tinqin.academy.model.team.TeamResponse;
 import com.tinqin.academy.operation.TeamProcessor;
-import com.tinqin.academy.repository.TeamRepository;
+import com.tinqin.academy.data.repository.TeamRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.springframework.core.convert.ConversionService;

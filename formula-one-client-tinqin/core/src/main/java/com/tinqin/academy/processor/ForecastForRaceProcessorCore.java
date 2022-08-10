@@ -1,6 +1,6 @@
 package com.tinqin.academy.processor;
 
-import com.tinqin.academy.entity.Race;
+import com.tinqin.academy.data.entity.Race;
 import com.tinqin.academy.feign.ForecastClient;
 import com.tinqin.academy.base.Error;
 import com.tinqin.academy.error.GeneralServerError;
@@ -14,7 +14,7 @@ import com.tinqin.academy.model.raceforecast.feign.FeignLocationRequest;
 import com.tinqin.academy.model.raceforecast.feign.FeignLocationResponse;
 import com.tinqin.academy.operation.ForecastForRaceProcessor;
 import com.tinqin.academy.operation.RaceProcessor;
-import com.tinqin.academy.repository.RaceRepository;
+import com.tinqin.academy.data.repository.RaceRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.springframework.stereotype.Service;
@@ -36,13 +36,10 @@ public class ForecastForRaceProcessorCore implements ForecastForRaceProcessor {
         return Try.of(()->{
             final Race race=raceRepository.getRaceByCircuitName(input.getCircuitName())
                     .orElseThrow(RaceNotFoundException::new);
-            final Either<Error, RaceResponse> raceResponse=raceProcessor.process(new RaceRequest(race.getId_race()));
+            final RaceResponse raceToGetForecast=raceProcessor.process(new RaceRequest(race.getId_race()))
+                    .getOrElseThrow(RaceNotFoundException::new);
 
-            if(raceResponse.isLeft()){
-                throw new RaceNotFoundException();
-            }
 
-            final RaceResponse raceToGetForecast=raceResponse.get();
             final FeignLocationResponse forecast=forecastClient.getForecast(FeignLocationRequest.builder()
                             .lat(raceToGetForecast.getLatitude())
                             .lon(raceToGetForecast.getLongitude())

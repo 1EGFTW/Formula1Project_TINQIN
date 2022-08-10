@@ -1,6 +1,6 @@
 package com.tinqin.academy.converter;
 
-import com.tinqin.academy.entity.Team;
+import com.tinqin.academy.data.entity.Team;
 import com.tinqin.academy.model.team.TeamResponse;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

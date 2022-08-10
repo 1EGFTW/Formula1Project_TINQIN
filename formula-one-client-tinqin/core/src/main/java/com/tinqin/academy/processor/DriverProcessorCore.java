@@ -1,14 +1,14 @@
 package com.tinqin.academy.processor;
 
 import com.tinqin.academy.base.Error;
-import com.tinqin.academy.entity.Driver;
+import com.tinqin.academy.data.entity.Driver;
 import com.tinqin.academy.error.NoSuchDriverError;
 import com.tinqin.academy.error.TransferFailedError;
 import com.tinqin.academy.exception.DriverNotFoundException;
 import com.tinqin.academy.model.driver.DriverRequest;
 import com.tinqin.academy.model.driver.DriverResponse;
 import com.tinqin.academy.operation.DriverProcessor;
-import com.tinqin.academy.repository.DriverRepository;
+import com.tinqin.academy.data.repository.DriverRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.springframework.core.convert.ConversionService;
