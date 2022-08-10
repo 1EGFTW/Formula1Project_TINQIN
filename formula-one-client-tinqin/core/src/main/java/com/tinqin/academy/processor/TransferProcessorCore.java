@@ -1,7 +1,7 @@
 package com.tinqin.academy.processor;
 
 import com.tinqin.academy.base.Error;
-import com.tinqin.academy.entity.Team;
+import com.tinqin.academy.data.entity.Team;
 import com.tinqin.academy.error.BudgetTooLowError;
 import com.tinqin.academy.error.NoSuchDriverError;
 import com.tinqin.academy.error.NoSuchTeamError;
@@ -19,8 +19,8 @@ import com.tinqin.academy.model.team.TeamResponse;
 import com.tinqin.academy.operation.DriverProcessor;
 import com.tinqin.academy.operation.TeamProcessor;
 import com.tinqin.academy.operation.TransferProcessor;
-import com.tinqin.academy.repository.DriverRepository;
-import com.tinqin.academy.repository.TeamRepository;
+import com.tinqin.academy.data.repository.DriverRepository;
+import com.tinqin.academy.data.repository.TeamRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.springframework.stereotype.Service;
@@ -48,16 +48,12 @@ public class TransferProcessorCore implements TransferProcessor {
     @Override
     public Either<Error, TransferResponse> process(final TransferRequest input) {
         return Try.of(()->{
-            final Either<Error,DriverResponse> driverResult=driverProcessor.process(new DriverRequest(input.getDriverId()));
-            final Either<Error, TeamResponse> oldTeamResult=teamProcessor.process(new TeamRequest(input.getTeamId()));
-            final Either<Error, TeamResponse> newTeamResult=teamProcessor.process(new TeamRequest(input.getNewTeamId()));
-
-            if(driverResult.isLeft() || oldTeamResult.isLeft() || newTeamResult.isLeft())
-                throw new TransferNotPossibleException();
-
-            final DriverResponse driver=driverResult.get();
-            final TeamResponse newTeam=newTeamResult.get();
-            final TeamResponse oldTeam=oldTeamResult.get();
+            final DriverResponse driver=driverProcessor.process(new DriverRequest(input.getDriverId()))
+                    .getOrElseThrow(TransferNotPossibleException::new);
+            final TeamResponse oldTeam=teamProcessor.process(new TeamRequest(input.getTeamId()))
+                    .getOrElseThrow(TransferNotPossibleException::new);
+            final TeamResponse newTeam=teamProcessor.process(new TeamRequest(input.getNewTeamId()))
+                    .getOrElseThrow(TransferNotPossibleException::new);
 
             final Double newTeamBudget=Double.parseDouble(newTeam.getBudget());
             final Double driverSalary=Double.parseDouble(driver.getSalary());

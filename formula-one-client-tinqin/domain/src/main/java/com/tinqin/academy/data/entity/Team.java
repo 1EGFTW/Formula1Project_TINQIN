@@ -1,6 +1,5 @@
-package com.tinqin.academy.entity;
+package com.tinqin.academy.data.entity;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 

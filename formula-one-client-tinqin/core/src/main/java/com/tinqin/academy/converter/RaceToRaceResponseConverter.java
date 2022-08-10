@@ -1,6 +1,6 @@
 package com.tinqin.academy.converter;
 
-import com.tinqin.academy.entity.Race;
+import com.tinqin.academy.data.entity.Race;
 import com.tinqin.academy.model.race.RaceResponse;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

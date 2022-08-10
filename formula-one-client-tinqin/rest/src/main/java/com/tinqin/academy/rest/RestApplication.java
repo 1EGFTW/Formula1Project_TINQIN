@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.tinqin.academy")
-@EnableJpaRepositories("com.tinqin.academy.repository")
-@EntityScan("com.tinqin.academy.entity")
+@EnableJpaRepositories("com.tinqin.academy.data.repository")
+@EntityScan("com.tinqin.academy.data.entity")
 @EnableFeignClients(basePackages = "com.tinqin.academy")
 public class RestApplication {
 
