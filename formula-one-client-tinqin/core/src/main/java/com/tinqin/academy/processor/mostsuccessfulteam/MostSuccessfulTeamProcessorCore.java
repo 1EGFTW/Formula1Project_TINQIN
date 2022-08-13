@@ -29,7 +29,12 @@ public class MostSuccessfulTeamProcessorCore implements MostSuccessfulTeamProces
         this.teamRepository = teamRepository;
         this.driverRepository = driverRepository;
     }
-
+    private Integer sumTitles(List<Integer> titles){
+        Integer total=0;
+        for(Integer title:titles)
+            total+=title;
+        return total;
+    }
     @Override
     public Either<Error, MostSuccessfulTeamResponse> process(final MostSuccessfulTeamRequest input) {
         return Try.of(()->{
@@ -41,11 +46,7 @@ public class MostSuccessfulTeamProcessorCore implements MostSuccessfulTeamProces
                                 .stream()
                                 .map(Driver::getChampionships)
                                 .toList();
-                        Integer titlesForTeam=0;
-                        for(Integer title:allTeamTitles){
-                            titlesForTeam+=title;
-                        }
-                        result.put(titlesForTeam,team.getTeamName());
+                        result.put(sumTitles(allTeamTitles),team.getTeamName());
                     });
             final Integer mostTitles=result.keySet().stream()
                     .max(Integer::compare)
