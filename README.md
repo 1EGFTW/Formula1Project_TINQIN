@@ -2,7 +2,7 @@
 
 
 ForecastForRace service - https://github.com/1EGFTW/Formula1Project_TINQIN_ForecastForRace.git
-
+MapsForRace service - https://github.com/1EGFTW/Formula1Project_TINQIN_MAPS.git
 
 
 •	Имаме шофьори, които имат име, брой титли,заплата и отбор.
@@ -13,3 +13,4 @@ ForecastForRace service - https://github.com/1EGFTW/Formula1Project_TINQIN_Forec
 •	Поддържа се операция за извеждане на шофьора с най-много спечелени титли.
 •	Поддържа се операция за извеждане на отбора, чиито шофьори са спечелили най-много титли.
 •	Поддържа се операция за показване на прогроза за времето за дадено състезание (температура, влажност, условия)
+• Поддържа се операция за показване на снимка на карта с локацията на която се намира дадено състезание.
