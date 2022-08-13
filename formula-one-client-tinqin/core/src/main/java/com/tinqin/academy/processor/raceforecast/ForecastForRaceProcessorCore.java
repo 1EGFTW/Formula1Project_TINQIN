@@ -1,4 +1,4 @@
-package com.tinqin.academy.processor.race;
+package com.tinqin.academy.processor.raceforecast;
 
 import com.tinqin.academy.data.entity.Race;
 import com.tinqin.academy.error.forecast.ForecastServiceUnavailableError;
