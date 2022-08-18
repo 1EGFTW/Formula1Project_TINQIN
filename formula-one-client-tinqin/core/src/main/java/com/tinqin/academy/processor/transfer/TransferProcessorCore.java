@@ -50,8 +50,12 @@ public class TransferProcessorCore implements TransferProcessor {
         return Try.of(()->{
             final DriverResponse driver=driverProcessor.process(new DriverRequest(input.getDriverId()))
                     .getOrElseThrow(TransferNotPossibleException::new);
-            final TeamResponse oldTeam=teamProcessor.process(new TeamRequest(input.getTeamId()))
+
+            final TeamResponse oldTeam=teamProcessor.process(new TeamRequest(teamRepository.findTeamByTeamName(driver.getTeam())
+                    .orElseThrow(TeamNotFoundException::new)
+                    .getId_team()))
                     .getOrElseThrow(TransferNotPossibleException::new);
+
             final TeamResponse newTeam=teamProcessor.process(new TeamRequest(input.getNewTeamId()))
                     .getOrElseThrow(TransferNotPossibleException::new);
 
