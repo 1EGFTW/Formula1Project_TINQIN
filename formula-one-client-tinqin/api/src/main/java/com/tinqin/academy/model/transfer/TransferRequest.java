@@ -11,6 +11,5 @@ import lombok.Setter;
 @Setter(AccessLevel.PRIVATE)
 public class TransferRequest implements OperationInput {
     private Long driverId;
-    private Long teamId;
     private Long newTeamId;
 }
