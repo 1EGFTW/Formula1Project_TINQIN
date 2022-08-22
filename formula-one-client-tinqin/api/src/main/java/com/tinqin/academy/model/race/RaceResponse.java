@@ -8,6 +8,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class RaceResponse implements OperationResult {
     private String circuitName;
 

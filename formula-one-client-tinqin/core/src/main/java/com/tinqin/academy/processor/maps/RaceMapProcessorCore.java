@@ -36,7 +36,7 @@ public class RaceMapProcessorCore implements RaceMapProcessor {
     }
 
     @Override
-    public Either<Error, RaceMapResponse> process(RaceMapRequest input) {
+    public Either<Error, RaceMapResponse> process(final RaceMapRequest input) {
         return Try.of(()->{
             final Race race=raceRepository.getRaceByCircuitName(input.getCircuitName())
                     .orElseThrow(RaceNotFoundException::new);

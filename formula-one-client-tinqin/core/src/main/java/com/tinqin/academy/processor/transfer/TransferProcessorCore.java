@@ -29,11 +29,13 @@ import java.util.stream.Stream;
 
 @Service
 public class TransferProcessorCore implements TransferProcessor {
+    private static final Double FIA_TRANSFER_FEE=5000000.0;
+
     private final DriverProcessor driverProcessor;
     private final TeamProcessor teamProcessor;
+
     private final TeamRepository teamRepository;
     private final DriverRepository driverRepository;
-    private static final Double FIA_TRANSFER_FEE=5000000.0;
 
     public TransferProcessorCore(DriverProcessor driverProcessor, TeamProcessor teamProcessor, TeamRepository teamRepository, DriverRepository driverRepository) {
         this.driverProcessor = driverProcessor;
@@ -70,7 +72,7 @@ public class TransferProcessorCore implements TransferProcessor {
            return Stream.of(driverRepository.findDriverByFirstNameAndLastName(driver.getFirstName(),driver.getLastName())
                     .orElseThrow(DriverNotFoundException::new))
                     .map(driver1 -> {
-                        Team team=teamRepository.findTeamByTeamName(newTeam.getTeamName())
+                        final Team team=teamRepository.findTeamByTeamName(newTeam.getTeamName())
                                 .orElseThrow(TeamNotFoundException::new);
                         driver1.setTeam(team);
                         driverRepository.save(driver1);

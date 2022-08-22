@@ -38,9 +38,7 @@ public class HomeController {
       this.raceMapProcessor = raceMapProcessor;
    }
 
-   //transfer
    @PostMapping("/transfer")
-
    public ResponseEntity<?> transfer(@RequestBody final TransferRequest transferRequest){
       Either<Error, TransferResponse> response=transferProcessor.process(transferRequest);
       if(response.isLeft()){

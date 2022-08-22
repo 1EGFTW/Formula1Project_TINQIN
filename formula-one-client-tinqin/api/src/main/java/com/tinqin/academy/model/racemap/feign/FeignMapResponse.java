@@ -10,6 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode
+@ToString
 public class FeignMapResponse{
     private byte[] imageData;
 }

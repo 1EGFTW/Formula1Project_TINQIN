@@ -38,9 +38,8 @@ public class MostSuccessfulTeamProcessorCore implements MostSuccessfulTeamProces
     @Override
     public Either<Error, MostSuccessfulTeamResponse> process(final MostSuccessfulTeamRequest input) {
         return Try.of(()->{
-            final List<Team> teams=teamRepository.findAll();
             final Map<Integer,String> result=new HashMap<>();
-            teams.stream()
+            teamRepository.findAll().stream()
                     .forEach(team -> {
                         final List<Integer> allTeamTitles= driverRepository.findDriversByTeam(team)
                                 .stream()
