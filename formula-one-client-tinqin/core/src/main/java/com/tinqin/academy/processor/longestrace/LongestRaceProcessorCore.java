@@ -25,10 +25,9 @@ public class LongestRaceProcessorCore implements LongestRaceProcessor {
     @Override
     public Either<Error, LongestRaceResponse> process(final LongestRaceRequest input) {
         return Try.of(()->{
-            List<Race> races=raceRepository.findAll();
-            return races.stream()
+            return raceRepository.findAll().stream()
                     .map(race -> {
-                        Double totalDistance=race.getDistancePerLap()*race.getLaps();
+                        final Double totalDistance=race.getDistancePerLap()*race.getLaps();
                         return LongestRaceResponse.builder()
                                 .circuitName(race.getCircuitName())
                                 .totalDistance(String.valueOf(totalDistance)+" km")

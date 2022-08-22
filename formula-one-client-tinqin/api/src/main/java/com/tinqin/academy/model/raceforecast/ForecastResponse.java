@@ -10,6 +10,8 @@ import java.time.LocalDate;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @Builder
+@EqualsAndHashCode
+@ToString
 public class ForecastResponse implements OperationResult {
     private String circuitName;
     private String temperature;

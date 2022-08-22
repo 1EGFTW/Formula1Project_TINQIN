@@ -11,10 +11,12 @@ import com.tinqin.academy.operation.DriverProcessor;
 import com.tinqin.academy.data.repository.DriverRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 public class DriverProcessorCore implements DriverProcessor {
     private final ConversionService conversionService;
     private final DriverRepository driverRepository;

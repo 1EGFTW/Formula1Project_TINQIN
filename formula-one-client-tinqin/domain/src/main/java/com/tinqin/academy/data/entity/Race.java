@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "race")
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter
 public class Race {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
