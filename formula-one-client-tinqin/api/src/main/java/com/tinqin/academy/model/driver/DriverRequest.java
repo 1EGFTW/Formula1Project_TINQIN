@@ -7,6 +7,8 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class DriverRequest implements OperationInput {
     private Long driverId;
 }

@@ -5,6 +5,8 @@ import lombok.*;
 @Builder
 @Getter
 @Setter(AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class FeignLocationResponse {

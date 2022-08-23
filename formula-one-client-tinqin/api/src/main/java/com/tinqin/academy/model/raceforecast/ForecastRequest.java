@@ -7,6 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter(AccessLevel.PRIVATE)
+@Builder
+@EqualsAndHashCode
+@ToString
 public class ForecastRequest implements OperationInput {
     private String circuitName;
 }

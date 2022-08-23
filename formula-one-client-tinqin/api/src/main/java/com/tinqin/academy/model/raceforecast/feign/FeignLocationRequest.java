@@ -7,6 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode
+@ToString
 public class FeignLocationRequest {
     private Double lat;
     private Double lon;
