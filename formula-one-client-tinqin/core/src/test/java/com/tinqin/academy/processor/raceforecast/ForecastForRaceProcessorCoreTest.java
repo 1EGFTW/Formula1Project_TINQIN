@@ -1,9 +1,11 @@
 package com.tinqin.academy.processor.raceforecast;
 
+import com.tinqin.academy.base.Error;
 import com.tinqin.academy.data.entity.Driver;
 import com.tinqin.academy.data.entity.Race;
 import com.tinqin.academy.data.entity.Team;
 import com.tinqin.academy.data.repository.RaceRepository;
+import com.tinqin.academy.error.GeneralServerError;
 import com.tinqin.academy.feign.ForecastClient;
 import com.tinqin.academy.model.race.RaceRequest;
 import com.tinqin.academy.model.race.RaceResponse;
@@ -11,15 +13,19 @@ import com.tinqin.academy.model.raceforecast.ForecastRequest;
 import com.tinqin.academy.model.raceforecast.ForecastResponse;
 import com.tinqin.academy.model.raceforecast.feign.FeignLocationRequest;
 import com.tinqin.academy.model.raceforecast.feign.FeignLocationResponse;
+import com.tinqin.academy.model.team.TeamResponse;
 import com.tinqin.academy.processor.maps.RaceMapProcessorCore;
 import com.tinqin.academy.processor.race.RaceProcessorCore;
 import io.vavr.control.Either;
+import io.vavr.control.Try;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.convert.ConversionService;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -28,11 +34,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class ForecastForRaceProcessorCoreTest {
-    @Mock
-    private RaceProcessorCore raceProcessorCore;
 
+   /* @Mock
+    private ConversionService conversionService;*/
     @Mock
     private RaceRepository raceRepository;
+
+  /*  @Mock
+    private RaceProcessorCore raceProcessorCore*//*=new RaceProcessorCore(conversionService,raceRepository)*//*;*/
 
     @Mock
     private ForecastClient forecastClient;
@@ -50,31 +59,32 @@ class ForecastForRaceProcessorCoreTest {
         final Team team=new Team("Team1",8000.0);
         final Driver driver=new Driver("Alexander", "Zhivkov", 1000.0, 8, team);
 
+        team.setId_team(1L);
+        driver.setId_driver(1L);
         LocalDate localDate= LocalDate.now();
 
         final Race race=new Race("C1", localDate,driver,10.0,10.0,100.0,100);
         race.setId_race(1L);
 
-        when(raceRepository.getRaceByCircuitName("C1")).thenReturn(Optional.of(race));
-        when(raceProcessorCore.process(new RaceRequest(1L)))
-                .thenReturn(Either.right(RaceResponse.builder()
-                                .winnerFirstName(driver.getFirstName())
-                                .winnerLastName(driver.getLastName())
-                                .latitude(race.getLatitude())
-                                .longitude(race.getLongitude())
-                                .raceDate(localDate)
-                                .circuitName(race.getCircuitName())
-                        .build()));
-        when(forecastClient.getForecast(FeignLocationRequest.builder()
-                        .lon(race.getLongitude())
-                        .lat(race.getLatitude())
-                .build())).thenReturn(FeignLocationResponse.builder()
+        when(raceRepository.getRaceByCircuitName(race.getCircuitName()))
+                .thenReturn(Optional.of(race));
+
+        FeignLocationRequest feignLocationRequest=new FeignLocationRequest(10.0,10.0);
+
+        Mockito.when(forecastClient.getForecast(feignLocationRequest))
+                .thenReturn(FeignLocationResponse.builder()
                         .condition("Sunny")
                         .humidity("100")
                         .temperature("10")
-                .build());
+                        .build());
 
-        ForecastRequest forecastRequest=new ForecastRequest("C1");
+        FeignLocationResponse feignLocationResponse=FeignLocationResponse.builder()
+                .condition("Sunny")
+                .humidity("100")
+                .temperature("10")
+                .build();
+
+        assertEquals(feignLocationResponse,forecastClient.getForecast(feignLocationRequest));
 
         ForecastResponse f= ForecastResponse.builder()
                 .circuitName("C1")
@@ -83,8 +93,8 @@ class ForecastForRaceProcessorCoreTest {
                 .temperature("10")
                 .build();
 
-        Assertions.assertNotNull(forecastForRaceProcessorCore.process(forecastRequest).get());
-        Assertions.assertEquals(f,forecastForRaceProcessorCore.process(forecastRequest).get());
+        assertNotNull(forecastForRaceProcessorCore.process(new ForecastRequest("C1")).get());
+        assertEquals(f,forecastForRaceProcessorCore.process(new ForecastRequest("C1")).get());
 
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class RaceMapRequest implements OperationInput {
     private String circuitName;
 }

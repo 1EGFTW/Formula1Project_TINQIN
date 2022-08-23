@@ -24,12 +24,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ForecastForRaceProcessorCore implements ForecastForRaceProcessor {
-    private final RaceProcessor raceProcessor;
+   /* private final RaceProcessor raceProcessor;*/
     private final ForecastClient forecastClient;
     private final RaceRepository raceRepository;
 
-    public ForecastForRaceProcessorCore(RaceProcessor raceProcessor, ForecastClient forecastClient, RaceRepository raceRepository) {
-        this.raceProcessor = raceProcessor;
+    public ForecastForRaceProcessorCore(/*RaceProcessor raceProcessor,*/ ForecastClient forecastClient, RaceRepository raceRepository) {
+        /*this.raceProcessor = raceProcessor;*/
         this.forecastClient = forecastClient;
         this.raceRepository = raceRepository;
     }
@@ -39,17 +39,17 @@ public class ForecastForRaceProcessorCore implements ForecastForRaceProcessor {
         return Try.of(()->{
             final Race race=raceRepository.getRaceByCircuitName(input.getCircuitName())
                     .orElseThrow(RaceNotFoundException::new);
-            final RaceResponse raceToGetForecast=raceProcessor.process(new RaceRequest(race.getId_race()))
+            /*final RaceResponse raceToGetForecast=raceProcessor.process(new RaceRequest(race.getId_race()))
                     .getOrElseThrow(RaceNotFoundException::new);
-
+*/
 
             final FeignLocationResponse forecast=forecastClient.getForecast(FeignLocationRequest.builder()
-                            .lat(raceToGetForecast.getLatitude())
-                            .lon(raceToGetForecast.getLongitude())
+                            .lat(race.getLatitude())
+                            .lon(race.getLongitude())
                     .build());
 
             return ForecastResponse.builder()
-                    .circuitName(raceToGetForecast.getCircuitName())
+                    .circuitName(race.getCircuitName())
                     .condition(forecast.getCondition())
                     .temperature(forecast.getTemperature())
                     .humidity(forecast.getHumidity())

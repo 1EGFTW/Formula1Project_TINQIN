@@ -10,6 +10,8 @@ import java.util.List;
 @Getter
 @EqualsAndHashCode
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class TeamResponse implements OperationResult {
     private String teamName;
     private String budget;
