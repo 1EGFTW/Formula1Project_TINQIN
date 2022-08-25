@@ -82,7 +82,7 @@ public class HomeController {
       return ResponseEntity.status(HttpStatus.OK).body(response.get());
    }
 
-   @PostMapping(value="/showRaceMap", produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.ALL_VALUE})
+   @PostMapping(value="/showRaceMap", produces = {MediaType.IMAGE_JPEG_VALUE})
    public ResponseEntity<?> getLocation(@RequestBody RaceMapRequest raceMapRequest){
       Either<Error, RaceMapResponse> response=raceMapProcessor.process(raceMapRequest);
       if(response.isLeft()){
