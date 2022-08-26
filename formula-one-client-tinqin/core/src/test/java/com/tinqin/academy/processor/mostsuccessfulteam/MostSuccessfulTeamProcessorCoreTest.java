@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -65,5 +66,19 @@ class MostSuccessfulTeamProcessorCoreTest {
 
         Assertions.assertNotNull(mostSuccessfulTeamProcessorCore.process(mostSuccessfulTeamRequest).get());
         Assertions.assertEquals(m,mostSuccessfulTeamProcessorCore.process(mostSuccessfulTeamRequest).get());
+    }
+
+    @Test
+    void testGeneraleServerError(){
+        final Team team=new Team("Team1",8000.0);
+
+
+        when(teamRepository.findAll()).thenReturn(null);
+        when(driverRepository.findDriversByTeam(team)).thenReturn(null);
+
+        MostSuccessfulTeamRequest mostSuccessfulTeamRequest=new MostSuccessfulTeamRequest();
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,mostSuccessfulTeamProcessorCore.process(mostSuccessfulTeamRequest).getLeft().getCode());
+        Assertions.assertEquals("Unhandled exceptions!",mostSuccessfulTeamProcessorCore.process(mostSuccessfulTeamRequest).getLeft().getMessage());
     }
 }

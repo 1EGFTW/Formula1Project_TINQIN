@@ -68,12 +68,13 @@ class RestApplicationTests {
         ResponseEntity<TransferResponse> response=ResponseEntity.status(HttpStatus.OK)
                 .body(transferResponse);
 
+
+        Assertions.assertEquals(response,homeController.transfer(transferRequest));
+
         TransferRequest fakeRequest=TransferRequest.builder()
                         .driverId(7L)
                                 .newTeamId(8L)
                                         .build();
-
-        Assertions.assertEquals(response,homeController.transfer(transferRequest));
 
         Assertions.assertEquals(HttpStatus.NOT_ACCEPTABLE,homeController.transfer(fakeRequest).getStatusCode());
         Assertions.assertEquals("Transfer failed",homeController.transfer(fakeRequest).getBody().toString());

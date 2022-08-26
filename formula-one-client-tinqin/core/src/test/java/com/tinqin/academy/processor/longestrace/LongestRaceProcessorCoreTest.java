@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
@@ -62,5 +63,16 @@ class LongestRaceProcessorCoreTest {
 
         Assertions.assertNotNull(longestRaceProcessorCore.process(longestRaceRequest).get());
         Assertions.assertEquals(l,longestRaceProcessorCore.process(longestRaceRequest).get());
+    }
+
+    @Test
+    void testErrors(){
+
+        when(raceRepository.findAll()).thenReturn(null);
+
+        LongestRaceRequest longestRaceRequest=new LongestRaceRequest();
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,longestRaceProcessorCore.process(longestRaceRequest).getLeft().getCode());
+        Assertions.assertEquals("Unhandled exceptions!",longestRaceProcessorCore.process(longestRaceRequest).getLeft().getMessage());
     }
 }
