@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -35,13 +36,8 @@ import static org.mockito.Mockito.when;
 
 class ForecastForRaceProcessorCoreTest {
 
-   /* @Mock
-    private ConversionService conversionService;*/
     @Mock
     private RaceRepository raceRepository;
-
-  /*  @Mock
-    private RaceProcessorCore raceProcessorCore*//*=new RaceProcessorCore(conversionService,raceRepository)*//*;*/
 
     @Mock
     private ForecastClient forecastClient;
@@ -95,6 +91,36 @@ class ForecastForRaceProcessorCoreTest {
 
         assertNotNull(forecastForRaceProcessorCore.process(new ForecastRequest("C1")).get());
         assertEquals(f,forecastForRaceProcessorCore.process(new ForecastRequest("C1")).get());
+    }
 
+    @Test
+    void testNoSuchRaceError() {
+        when(raceRepository.getRaceByCircuitName("C1"))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertEquals("No such race!",forecastForRaceProcessorCore
+                .process(new ForecastRequest("C1"))
+                .getLeft()
+                .getMessage());
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND,forecastForRaceProcessorCore
+                .process(new ForecastRequest("C1"))
+                .getLeft()
+                .getCode());
+    }
+    @Test
+    void testGeneralServerError() {
+        when(raceRepository.getRaceByCircuitName("C1"))
+                .thenReturn(null);
+
+        Assertions.assertEquals("Unhandled exceptions!", forecastForRaceProcessorCore
+                .process(new ForecastRequest("C1"))
+                .getLeft()
+                .getMessage());
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, forecastForRaceProcessorCore
+                .process(new ForecastRequest("C1"))
+                .getLeft()
+                .getCode());
     }
 }

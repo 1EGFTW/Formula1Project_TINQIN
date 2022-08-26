@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -71,6 +72,41 @@ class RaceMapProcessorCoreTest {
         Assertions.assertNotNull(raceMapProcessorCore.process(raceMapRequest).get());
         Assertions.assertEquals(r,raceMapProcessorCore.process(raceMapRequest).get());
         System.out.println(raceMapProcessorCore.process(raceMapRequest));
+    }
 
+    @Test
+    void testErrorRaceNotFound(){
+        RaceMapRequest raceMapRequest=new RaceMapRequest("C1");
+        when(raceRepository.getRaceByCircuitName(raceMapRequest.getCircuitName()))
+                .thenReturn(Optional.empty());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND,raceMapProcessorCore.process(raceMapRequest).getLeft().getCode());
+        Assertions.assertEquals("No such race!",raceMapProcessorCore.process(raceMapRequest).getLeft().getMessage());
+    }
+    @Test
+    void testErrorMapsServiceUnavailable(){
+        final Team team=new Team("Team1",8000.0);
+        final Driver driver=new Driver("Alexander", "Zhivkov", 1000.0, 8, team);
+        team.setId_team(1L);
+        driver.setId_driver(1L);
+        LocalDate localDate= LocalDate.now();
+
+        final Race race=new Race("C1", localDate,driver,10.0,10.0,100.0,100);
+        race.setId_race(1L);
+
+        RaceMapRequest raceMapRequest=new RaceMapRequest(race.getCircuitName());
+
+        when(raceRepository.getRaceByCircuitName(raceMapRequest.getCircuitName()))
+                .thenReturn(Optional.of(race));
+
+
+        Mockito.when(mapsClient.generateMaps(FeignMapRequest.builder()
+                        .lat(race.getLatitude())
+                        .lon(race.getLongitude())
+                        .build()))
+                .thenReturn(null);
+
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,raceMapProcessorCore.process(raceMapRequest).getLeft().getCode());
+        Assertions.assertEquals("Unhandled exceptions!",raceMapProcessorCore.process(raceMapRequest).getLeft().getMessage());
     }
 }

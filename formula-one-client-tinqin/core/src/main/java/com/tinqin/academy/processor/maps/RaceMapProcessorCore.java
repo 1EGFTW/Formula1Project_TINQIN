@@ -46,9 +46,6 @@ public class RaceMapProcessorCore implements RaceMapProcessor {
                             .lon(race.getLongitude())
                     .build());
 
-           /* return RaceMapResponse.builder()
-                    .imageData(feignMapResponse.getImageData())
-                    .build();*/
             return new RaceMapResponse(feignMapResponse.getImageData());
         }).toEither()
                 .mapLeft(throwable -> {

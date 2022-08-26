@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -119,5 +120,42 @@ class RaceProcessorCoreTest {
         Assertions.assertEquals(raceResponse,raceProcessorCore.process(raceRequest).get());
         Assertions.assertEquals(raceResponse1,raceProcessorCore.process(raceRequest1).get());
         Assertions.assertEquals(raceResponse2,raceProcessorCore.process(raceRequest2).get());
+    }
+    @Test
+    void testNoSuchRaceError() {
+        final Team team=new Team("Team1",8000.0);
+        final Driver driver=new Driver("Alexander", "Zhivkov", 1000.0, 8, team);
+
+        LocalDate localDate= LocalDate.now();
+
+        final Race race1=new Race("C1", localDate,driver,10.0,10.0,100.0,100);
+        final Race race2=new Race("C2",localDate,driver,10.0,10.0,100.0,1000);
+        final Race race3=new Race("C3", localDate,driver,10.0,10.0,1.0,1);
+
+        race1.setId_race(1L);
+        race2.setId_race(2L);
+        race3.setId_race(3L);
+
+        when(raceRepository.findById(1L)).thenReturn(Optional.empty());
+
+        RaceRequest raceRequest=new RaceRequest(1L);
+
+
+        Assertions.assertEquals("No such race!",raceProcessorCore.process(raceRequest).getLeft().getMessage());
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND,raceProcessorCore.process(raceRequest).getLeft().getCode());
+    }
+
+    @Test
+    void testGeneralServerError(){
+
+        when(raceRepository.findById(1L)).thenReturn(null);
+
+        RaceRequest raceRequest=new RaceRequest(1L);
+
+
+        Assertions.assertEquals("Unhandled exceptions!",raceProcessorCore.process(raceRequest).getLeft().getMessage());
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,raceProcessorCore.process(raceRequest).getLeft().getCode());
     }
 }

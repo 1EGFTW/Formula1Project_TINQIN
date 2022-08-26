@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -73,5 +74,44 @@ class TeamProcessorCoreTest {
 
         Assertions.assertEquals(teamResponse,teamProcessorCore.process(teamRequest).get());
         Assertions.assertEquals(teamResponse2,teamProcessorCore.process(teamRequest1).get());
+    }
+
+    @Test
+    void testTeamNotFoundError(){
+        final Team team=new Team("Team1",8000.0);
+        team.setId_team(1L);
+
+        when(teamRepository.findById(1L)).thenReturn(Optional.empty());
+
+
+        TeamRequest teamRequest=new TeamRequest(1L);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND,teamProcessorCore.process(teamRequest)
+                .getLeft()
+                .getCode());
+
+        Assertions.assertEquals("No such team exists!",teamProcessorCore.process(teamRequest)
+                .getLeft()
+                .getMessage());
+
+    }
+    @Test
+    void testGeneralServerError(){
+        final Team team=new Team("Team1",8000.0);
+        team.setId_team(1L);
+
+        when(teamRepository.findById(1L)).thenReturn(null);
+
+
+        TeamRequest teamRequest=new TeamRequest(1L);
+
+        Assertions.assertEquals(HttpStatus.NOT_ACCEPTABLE,teamProcessorCore.process(teamRequest)
+                .getLeft()
+                .getCode());
+
+        Assertions.assertEquals("Transfer failed",teamProcessorCore.process(teamRequest)
+                .getLeft()
+                .getMessage());
+
     }
 }

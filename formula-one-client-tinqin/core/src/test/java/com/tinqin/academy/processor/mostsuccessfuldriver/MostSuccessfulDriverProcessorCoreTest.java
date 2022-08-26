@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -95,7 +96,21 @@ class MostSuccessfulDriverProcessorCoreTest {
 
         Assertions.assertNotNull(mostSuccessfulDriverProcessorCore.process(m).get());
         Assertions.assertEquals(mr,mostSuccessfulDriverProcessorCore.process(m).get());
-       /* Assertions.assertNull(mostSuccessfulDriverProcessorCore.process(m).getLeft());*/
 
+    }
+    @Test
+    void testDriverNotFound(){
+        when(driverRepository.findAll()).thenReturn(new ArrayList<>());
+        MostSuccessfulDriverRequest m=new MostSuccessfulDriverRequest();
+        Assertions.assertEquals(HttpStatus.NOT_FOUND,mostSuccessfulDriverProcessorCore.process(m).getLeft().getCode());
+        Assertions.assertEquals("No such driver exists!",mostSuccessfulDriverProcessorCore.process(m).getLeft().getMessage());
+    }
+    @Test
+    void testGeneralServerError(){
+        when(driverRepository.findAll()).thenReturn(null);
+        MostSuccessfulDriverRequest m=new MostSuccessfulDriverRequest();
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,mostSuccessfulDriverProcessorCore.process(m).getLeft().getCode());
+        Assertions.assertEquals("Unhandled exceptions!",mostSuccessfulDriverProcessorCore.process(m).getLeft().getMessage());
     }
 }

@@ -25,6 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -127,7 +128,205 @@ class TransferProcessorCoreTest {
                 .build();
         Assertions.assertNotNull(transferProcessorCore.process(transferRequest).get());
         Assertions.assertEquals(t,transferProcessorCore.process(transferRequest).get());
+    }
+    @Test
+    void testDriverNotFound() {
+        Team team=new Team("Team1",50000000.0);
+        Team team2=new Team("Team2",80000000.0);
+        team.setId_team(1L);
+        team2.setId_team(2L);
+        Driver driver=new Driver("Alexander", "Zhivkov", 1000000.0, 8, team);
+        driver.setId_driver(1L);
 
+        DriverRequest driverRequest=new DriverRequest(driver.getId_driver());
+
+        Mockito.when(driverProcessorCore.process(driverRequest))
+                .thenReturn(null);
+
+        when(driverRepository.findDriverByFirstNameAndLastName(driver.getFirstName(),driver.getLastName()))
+                .thenReturn(Optional.empty());
+
+        TransferRequest transferRequest= TransferRequest.builder()
+                .driverId(driver.getId_driver())
+                .newTeamId(team2.getId_team())
+                .build();
+
+
+        Assertions.assertEquals("Transfer failed",transferProcessorCore.process(transferRequest).getLeft().getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_ACCEPTABLE,transferProcessorCore.process(transferRequest).getLeft().getCode());
+    }
+    @Test
+    void testTeamNotFound() {
+        Team team=new Team("Team1",50000000.0);
+        Team team2=new Team("Team2",80000000.0);
+        team.setId_team(1L);
+        team2.setId_team(2L);
+        Driver driver=new Driver("Alexander", "Zhivkov", 1000000.0, 8, team);
+        driver.setId_driver(1L);
+
+        Either<Error,DriverResponse> driverResponses= Try.of(()->DriverResponse.builder()
+                        .firstName(driver.getFirstName())
+                        .team(driver.getTeam().getTeamName())
+                        .salary(String.valueOf(driver.getSalary()))
+                        .lastName(driver.getLastName())
+                        .build()).toEither()
+                .mapLeft(throwable -> {
+                            return new GeneralServerError();
+                        }
+                );
+
+        DriverRequest driverRequest=new DriverRequest(driver.getId_driver());
+        TeamRequest teamRequest=new TeamRequest(team.getId_team());
+
+        Mockito.when(driverProcessorCore.process(driverRequest))
+                .thenReturn(driverResponses);
+
+        when(teamProcessorCore.process(teamRequest))
+                .thenReturn(null);
+
+
+        when(teamRepository.findTeamByTeamName(team.getTeamName()))
+                .thenReturn(Optional.empty());
+
+        when(driverRepository.findDriverByFirstNameAndLastName(driver.getFirstName(),driver.getLastName()))
+                .thenReturn(Optional.of(driver));
+
+
+        TransferRequest transferRequest= TransferRequest.builder()
+                .driverId(driver.getId_driver())
+                .newTeamId(team2.getId_team())
+                .build();
+
+        Assertions.assertEquals("No such team exists!",transferProcessorCore.process(transferRequest).getLeft().getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND,transferProcessorCore.process(transferRequest).getLeft().getCode());
+    }
+    @Test
+    void testTransferNotPossible() {
+        Team team=new Team("Team1",50000000.0);
+        Team team2=new Team("Team2",80000000.0);
+        team.setId_team(1L);
+        team2.setId_team(2L);
+        Driver driver=new Driver("Alexander", "Zhivkov", 1000000.0, 8, team);
+        driver.setId_driver(1L);
+
+        Either<Error,DriverResponse> driverResponses= Try.of(()->DriverResponse.builder()
+                        .firstName(driver.getFirstName())
+                        .team(driver.getTeam().getTeamName())
+                        .salary(String.valueOf(driver.getSalary()))
+                        .lastName(driver.getLastName())
+                        .build()).toEither()
+                .mapLeft(throwable -> {
+                            return new GeneralServerError();
+                        }
+                );
+        Either<Error,TeamResponse> teamResponses= Try.of(()->TeamResponse.builder()
+                        .teamName(team.getTeamName())
+                        .budget(String.valueOf(team.getBudget()))
+                        .build()).toEither()
+                .mapLeft(throwable -> {
+                            return new GeneralServerError();
+                        }
+                );
+
+
+        DriverRequest driverRequest=new DriverRequest(driver.getId_driver());
+        TeamRequest teamRequest=new TeamRequest(team.getId_team());
+        TeamRequest teamRequest2=new TeamRequest(team2.getId_team());
+
+        Mockito.when(driverProcessorCore.process(driverRequest))
+                .thenReturn(driverResponses);
+
+        when(teamProcessorCore.process(teamRequest))
+                .thenReturn(teamResponses);
+
+        when(teamProcessorCore.process(teamRequest2))
+                .thenReturn(null);
+
+        when(teamRepository.findTeamByTeamName(team.getTeamName()))
+                .thenReturn(Optional.of(team));
+        when(teamRepository.findTeamByTeamName(team2.getTeamName()))
+                .thenReturn(Optional.empty());
+        when(driverRepository.findDriverByFirstNameAndLastName(driver.getFirstName(),driver.getLastName()))
+                .thenReturn(Optional.of(driver));
+
+
+        TransferRequest transferRequest= TransferRequest.builder()
+                .driverId(driver.getId_driver())
+                .newTeamId(team2.getId_team())
+                .build();
+
+        Assertions.assertEquals("Transfer failed",transferProcessorCore.process(transferRequest).getLeft().getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_ACCEPTABLE,transferProcessorCore.process(transferRequest).getLeft().getCode());
+    }
+    @Test
+    void testBudgetTooLow() {
+        Team team=new Team("Team1",50000000.0);
+        Team team2=new Team("Team2",1.0);
+        team.setId_team(1L);
+        team2.setId_team(2L);
+        Driver driver=new Driver("Alexander", "Zhivkov", 1000000.0, 8, team);
+        driver.setId_driver(1L);
+
+        Either<Error,DriverResponse> driverResponses= Try.of(()->DriverResponse.builder()
+                        .firstName(driver.getFirstName())
+                        .team(driver.getTeam().getTeamName())
+                        .salary(String.valueOf(driver.getSalary()))
+                        .lastName(driver.getLastName())
+                        .build()).toEither()
+                .mapLeft(throwable -> {
+                            return new GeneralServerError();
+                        }
+                );
+        Either<Error,TeamResponse> teamResponses= Try.of(()->TeamResponse.builder()
+                        .teamName(team.getTeamName())
+                        .budget(String.valueOf(team.getBudget()))
+                        .build()).toEither()
+                .mapLeft(throwable -> {
+                            return new GeneralServerError();
+                        }
+                );
+        Either<Error,TeamResponse> teamResponses2= Try.of(()->TeamResponse.builder()
+                        .teamName(team2.getTeamName())
+                        .budget(String.valueOf(team2.getBudget()))
+                        .build()).toEither()
+                .mapLeft(throwable -> {
+                            return new GeneralServerError();
+                        }
+                );
+
+        DriverRequest driverRequest=new DriverRequest(driver.getId_driver());
+        TeamRequest teamRequest=new TeamRequest(team.getId_team());
+        TeamRequest teamRequest2=new TeamRequest(team2.getId_team());
+
+        Mockito.when(driverProcessorCore.process(driverRequest))
+                .thenReturn(driverResponses);
+
+        when(teamProcessorCore.process(teamRequest))
+                .thenReturn(teamResponses);
+
+        when(teamProcessorCore.process(teamRequest2))
+                .thenReturn(teamResponses2);
+
+        when(teamRepository.findTeamByTeamName(team.getTeamName()))
+                .thenReturn(Optional.of(team));
+        when(teamRepository.findTeamByTeamName(team2.getTeamName()))
+                .thenReturn(Optional.of(team2));
+        when(driverRepository.findDriverByFirstNameAndLastName(driver.getFirstName(),driver.getLastName()))
+                .thenReturn(Optional.of(driver));
+
+
+        Mockito.when(driverRepository.save(driver)).thenReturn(null);
+
+        Mockito.when(teamRepository.save(team2)).thenReturn(null);
+
+
+        TransferRequest transferRequest= TransferRequest.builder()
+                .driverId(driver.getId_driver())
+                .newTeamId(team2.getId_team())
+                .build();
+
+        Assertions.assertEquals("New team doesn't have enough funds!",transferProcessorCore.process(transferRequest).getLeft().getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_ACCEPTABLE,transferProcessorCore.process(transferRequest).getLeft().getCode());
     }
 
 }
