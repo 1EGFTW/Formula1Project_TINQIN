@@ -39,9 +39,6 @@ public class ForecastForRaceProcessorCore implements ForecastForRaceProcessor {
         return Try.of(()->{
             final Race race=raceRepository.getRaceByCircuitName(input.getCircuitName())
                     .orElseThrow(RaceNotFoundException::new);
-            /*final RaceResponse raceToGetForecast=raceProcessor.process(new RaceRequest(race.getId_race()))
-                    .getOrElseThrow(RaceNotFoundException::new);
-*/
 
             final FeignLocationResponse forecast=forecastClient.getForecast(FeignLocationRequest.builder()
                             .lat(race.getLatitude())
